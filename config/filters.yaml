@@ -1,0 +1,121 @@
+# Relevance rules. A job is kept only if it looks like a student-level role
+# AND matches at least one topic bucket below. Tune these words freely.
+
+# ---- Level gate: the role must look student / early-career -------------------
+# Matched against the TITLE first, then the description as a fallback.
+level_keywords:
+  - intern
+  - internship
+  - co-op
+  - coop
+  - "new grad"
+  - "new graduate"
+  - "university grad"
+  - "entry level"
+  - "entry-level"
+  - "campus"
+  - "student"
+  - "early career"
+  - "early-career"
+  - "summer 2026"
+  - "2026 intern"
+
+# Titles that are almost always senior — reject even if a level word sneaks in.
+seniority_blocklist:
+  - senior
+  - "sr."
+  - "sr "
+  - staff
+  - principal
+  - " lead"
+  - manager
+  - director
+  - "vp "
+  - "head of"
+  - experienced
+  - phd            # drop PhD-only roles; you asked for college-level
+  - "ii "          # e.g. "Engineer II"
+  - " iii"
+
+# ---- Topic buckets: keep only jobs matching at least one -------------------
+topics:
+  statistics:
+    - statistics
+    - statistical
+    - biostatistics
+    - biostatistician
+    - quantitative
+    - quant
+    - econometrics
+    - "data analyst"
+  machine_learning:
+    - "machine learning"
+    - " ml "
+    - "ml engineer"
+    - "deep learning"
+    - "artificial intelligence"
+    - " ai "
+    - "data science"
+    - "data scientist"
+    - "nlp"
+    - "natural language"
+    - "computer vision"
+    - "research scientist"
+    - "applied scientist"
+  software_engineering:
+    - "software engineer"
+    - "software engineering"
+    - "software developer"
+    - " swe "
+    - backend
+    - "back end"
+    - frontend
+    - "front end"
+    - "full stack"
+    - "full-stack"
+    - "platform engineer"
+
+# Cap how many roles land in a single email (highest-scored win). Prevents a
+# firehose on busy days; new roles beyond the cap show up in later digests.
+max_items: 60
+
+# ---- HARD FILTERS: a role must pass all enabled ones to appear at all -------
+# (Set a flag to false to turn that gate back into a soft ranking boost only.)
+hard_filters:
+  by_location: true        # only roles in preferred_locations (below) are kept
+  include_unlocated: false # keep roles whose location is blank/unknown?
+  by_recency: true         # only roles posted within max_age_days are kept
+  max_age_days: 30
+  include_undated: true    # keep roles with no posted date (age can't be checked)?
+
+# Which job types to include. Use "all", or list any of:
+#   machine_learning (aliases: ml)  |  software_engineering (aliases: swe)
+#   statistics (aliases: stats)
+# A role must match at least one ENABLED type.
+job_types:
+  - all
+
+# Metros you most want to be in. Roles here get a big relevance boost and sort
+# to the top. Substring match on the job's location (case-insensitive), so
+# "New York" also catches "New York City, NY". Add/remove freely.
+preferred_locations:
+  - "Palo Alto"
+  - "Menlo Park"
+  - "Mountain View"
+  - "Philadelphia"
+  - "New York"
+  - "NYC"
+  - "Indianapolis"
+  - "Remote"
+
+# Scoring: bonus points so the best-matching roles float to the top of the email.
+scoring:
+  title_topic_hit: 5           # topic keyword appears in the title
+  desc_topic_hit: 1            # topic keyword appears in the description
+  level_title_hit: 3           # level word in the title (vs description)
+  preferred_location_bonus: 6  # job is in one of preferred_locations above
+  us_location_bonus: 1         # location mentions US / remote (fallback)
+  # Recency: a just-posted role gets +recency_weight, decaying linearly to 0
+  # over recency_window_days. Keeps the freshest roles at the top.
+  recency_weight: 8
+  recency_window_days: 30

@@ -1,0 +1,13 @@
+# secrets — never commit these
+client_secret.json
+.env
+*.env
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# local preview
+data/preview.html

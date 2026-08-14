@@ -1,0 +1,30 @@
+# Companies to track via their public Applicant Tracking System (ATS) job boards.
+# These endpoints are the same public JSON the companies' own careers pages use.
+#
+# How to find a company's token:
+#   Greenhouse: careers URL like boards.greenhouse.io/<token>  -> use <token>
+#   Lever:      jobs.lever.co/<company>                        -> use <company>
+#   Ashby:      jobs.ashbyhq.com/<token>                       -> use <token>
+#
+# Add/remove freely. Grouped by industry only for your own readability.
+
+greenhouse:
+  # tech
+  - stripe
+  - databricks
+  - airbnb
+  - robinhood       # finance-ish / fintech
+  - cloudflare
+  # finance
+  - twosigma
+  # medical / health
+  - tempus
+  - benchling
+
+lever:
+  - ramp
+  - plaid           # fintech
+
+ashby:
+  - openai
+  - ramp            # some companies list on multiple ATSs; dedupe handles it
