@@ -100,6 +100,20 @@ def _passes_recency(job: Job, cfg: dict) -> bool:
     return age <= hf.get("max_age_days", 30)
 
 
+def _passes_employment(job: Job, cfg: dict) -> bool:
+    """Keep only the employment types you want (e.g. internships only)."""
+    hf = cfg.get("hard_filters", {})
+    allowed = hf.get("employment_types")
+    if not allowed or "all" in allowed:
+        return True
+    allowed = {str(x).strip().lower() for x in allowed}
+    if job.employment in allowed:
+        return True
+    if not job.employment:  # unknown type
+        return bool(hf.get("include_unknown_employment", True))
+    return False
+
+
 def _any_in(needles: list[str], haystack: str) -> list[str]:
     hits = []
     for n in needles:
@@ -143,6 +157,15 @@ def relevant(job: Job, cfg: dict) -> bool:
     if _any_in(cfg["seniority_blocklist"], title):
         return False
 
+    # 1b) reject off-target domains by TITLE (e.g. marketing/sales analytics)
+    if _any_in(cfg.get("exclude_title_keywords", []), title):
+        return False
+
+    # 1c) reject roles you're ineligible for by grad year (title OR description),
+    #     e.g. "new grad" / "class of 2027" when you graduate later.
+    if _any_in(cfg.get("exclude_keywords", []), body):
+        return False
+
     # 2) must look student / early-career.
     #    - github-list feeds are already curated internship/new-grad lists, so the
     #      list itself is the level signal (their titles often omit "intern").
@@ -156,10 +179,13 @@ def relevant(job: Job, cfg: dict) -> bool:
             return False
         level_in_body = level_in_title
 
-    # 3) hard filters: location + recency (fail fast, before topic scan)
+    # 3) hard filters: location + recency + employment type (fail fast)
+    job.employment = classify_employment(job)
     if not _passes_location(job, cfg):
         return False
     if not _passes_recency(job, cfg):
+        return False
+    if not _passes_employment(job, cfg):
         return False
 
     # 4) must match at least one ENABLED topic bucket (job_types hard filter)
@@ -203,7 +229,6 @@ def relevant(job: Job, cfg: dict) -> bool:
 
     job.category = ", ".join(sorted(set(hit_buckets)))
     job.matched = sorted(set(matched_topics + level_in_title + level_in_body))
-    job.employment = classify_employment(job)
     job.score = score
     return True
 

@@ -37,6 +37,36 @@ seniority_blocklist:
   - "ii "          # e.g. "Engineer II"
   - " iii"
 
+# Reject by TITLE — off-target domains that "analytics" would otherwise pull in.
+# This is what keeps marketing/sales/growth analytics roles out.
+exclude_title_keywords:
+  - marketing
+  - advertising
+  - seo
+  - "social media"
+  - "public relations"
+  - "growth marketing"
+  - "brand "
+
+# Reject by TITLE or DESCRIPTION — roles you're not eligible for. You graduate in
+# 2029, so drop new-grad roles and anything targeting the classes of 2027 / 2028.
+# (Season phrases like "Summer 2027" are NOT listed, so those internships stay.)
+exclude_keywords:
+  - "new grad"
+  - "new graduate"
+  - "class of 2027"
+  - "class of 2028"
+  - "graduating 2027"
+  - "graduating 2028"
+  - "graduating in 2027"
+  - "graduating in 2028"
+  - "graduate in 2027"
+  - "graduate in 2028"
+  - "2027 grad"
+  - "2028 grad"
+  - "2027 graduate"
+  - "2028 graduate"
+
 # ---- Topic buckets: keep only jobs matching at least one -------------------
 # Broadened to cover applied statistics / ML across industries: core ML & SWE,
 # plus data science & analytics (incl. consulting), quant & finance, and
@@ -133,6 +163,11 @@ hard_filters:
   by_recency: true         # only roles posted within max_age_days are kept
   max_age_days: 30
   include_undated: true    # keep roles with no posted date (age can't be checked)?
+  # Which employment types to keep. You graduate in 2029, so internships only.
+  # Change to [internship, full-time] or "all" later when you want new-grad roles.
+  employment_types:
+    - internship
+  include_unknown_employment: false  # drop roles we can't confidently classify
 
 # Which fields to include. Use "all", or list any of:
 #   machine_learning     (aliases: ml, ai)
