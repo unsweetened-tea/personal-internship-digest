@@ -1,89 +1,94 @@
-# 🎓 Internship Digest
+# Internship Digest
 
-A daily email digest of **college-level internship / new-grad roles** in
-**statistics, machine learning, and software engineering** at tech / finance /
-medical firms.
+A daily email of college internships in statistics, machine learning, and
+software engineering, plus related data roles in consulting, finance, and
+healthcare. It checks a handful of job sources each morning and emails me the new
+ones, ranked by how well they fit.
 
-It pulls from ToS-friendly sources only:
+Sources (all public or official, nothing that breaks a site's terms of use):
 
-- **Company ATS boards** — Greenhouse, Lever, Ashby public JSON (the same feeds
-  the companies' own careers pages use). Edit `config/companies.yaml`.
-- **Community listing repos** — Simplify/pittcsc `listings.json` feeds.
-- **Job-search APIs** — Adzuna and USAJobs (official, free API keys, optional).
+- Company job boards on Greenhouse, Lever, and Ashby. These read the same JSON
+  their own careers pages load. The list is in `config/companies.yaml`.
+- Community internship lists from Simplify (their `listings.json` files).
+- Adzuna and USAJobs search APIs. Optional, and need free keys.
 
-Runs free on **GitHub Actions** every morning and emails you via the **Gmail API**.
+It runs on GitHub Actions at no cost and sends the mail through the Gmail API.
 
-```
-fetch sources → filter (level + topic) → dedupe → new-since-last-run → email
-```
-
-## Quick start (local)
+## Quick start
 
 ```bash
 cd internship-digest
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# Preview today's matches without emailing — writes data/preview.html
 python -m src.main --dry-run
 open data/preview.html
 ```
 
-No API keys are needed for the ATS + GitHub-list sources — the dry run works
-immediately. Adzuna/USAJobs skip themselves until you add keys.
+The dry run writes an HTML preview instead of sending anything. Company boards and
+community lists work with no setup. Adzuna and USAJobs stay off until you add keys.
 
-## Turn on email (Gmail API)
+## Email setup (Gmail API)
 
-1. Google Cloud Console → new project → **enable Gmail API**.
-2. **OAuth consent screen** → External. Add `you@example.com` as a Test user,
-   then click **PUBLISH APP** so the status is **In production**.
-   ⚠️ Skip this and your refresh token silently **expires after 7 days** (Google
-   expires tokens for apps stuck in "Testing"). Production tokens don't expire.
-3. **Credentials → OAuth client ID → Desktop app** → download `client_secret.json`
-   into this folder.
-4. Mint a refresh token once:
-   ```bash
-   python -m src.auth
-   ```
-   A browser opens. Because the app is unverified you'll see a warning — click
-   **Advanced → Go to (app)** and allow. Copy the three printed values.
+1. In the Google Cloud Console, create a project and enable the Gmail API.
+2. Open the OAuth consent screen, pick External, add `you@example.com` as a
+   test user, then click Publish App so the status reads "In production". Leaving
+   it in Testing makes Google expire the refresh token after 7 days, which quietly
+   kills the digest.
+3. Under Credentials, create an OAuth client ID of type Desktop app and download it
+   as `client_secret.json` in this folder.
+4. Run `python -m src.auth`. A browser opens. The app is unverified, so click
+   Advanced, then "Go to (app)", and allow it. Copy the three values it prints.
 
 ## Deploy on GitHub Actions
 
-1. **Seed locally first** so your first email isn't a firehose of every open role:
+1. Seed once so the first email isn't every open role at the same time:
    ```bash
-   python -m src.main --seed      # marks all current roles "seen", sends nothing
+   python -m src.main --seed
    ```
-2. Push this folder to a new GitHub repo (include the updated `data/seen.json`).
-3. Repo **Settings → Secrets and variables → Actions → New repository secret** → add:
+   That marks everything currently open as already seen and sends nothing.
+2. Push the folder to a GitHub repo, including the updated `data/seen.json`.
+3. In the repo, open Settings > Secrets and variables > Actions and add:
    - `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN`
-   - `DIGEST_TO` = `you@example.com`
-   - *(optional)* `ADZUNA_APP_ID`, `ADZUNA_APP_KEY`, `USAJOBS_API_KEY`, `USAJOBS_EMAIL`
-4. Repo **Settings → Actions → General → Workflow permissions** → select
-   **Read and write permissions** (lets the job commit `data/seen.json` back).
-5. **Actions** tab → **daily-internship-digest** → *Run workflow* to test right now.
-   Check your inbox, then you're done — it runs **daily at 12:00 PM** on its own.
+   - `DIGEST_TO` set to `you@example.com`
+   - optional: `ADZUNA_APP_ID`, `ADZUNA_APP_KEY`, `USAJOBS_API_KEY`, `USAJOBS_EMAIL`
+4. In Settings > Actions > General, set Workflow permissions to "Read and write" so
+   the job can commit `data/seen.json` back.
+5. Open the Actions tab, pick daily-internship-digest, and click Run workflow to
+   test it. Once the email lands you're set, and it runs on its own at noon daily.
 
-**Send time** lives in `.github/workflows/daily.yml` (`cron:` line, in UTC —
-currently noon Eastern). GitHub cron doesn't follow daylight saving, so nudge it
-±1 hour at the spring/fall switch if you want it exactly at local noon.
+The schedule is the cron line in `.github/workflows/daily.yml`, written in UTC and
+set to noon Eastern. GitHub's cron ignores daylight saving, so shift it an hour at
+the spring and fall time changes if you want it to stay at noon.
 
 ## Tuning
 
-| Want to… | Edit |
+Everything is in `config/filters.yaml` unless the row says otherwise.
+
+| To change | Edit |
 |---|---|
-| Track different companies | `config/companies.yaml` |
-| Change keywords / topics / seniority filter | `config/filters.yaml` |
-| Set target metros | `preferred_locations` in `config/filters.yaml` |
-| Restrict to ml / swe / stats (or all) | `job_types:` in `config/filters.yaml` |
-| Turn location/recency gates on/off | `hard_filters:` in `config/filters.yaml` |
-| Tune recency vs location weighting | `scoring:` block in `config/filters.yaml` |
-| Change send time | the `cron:` line in `.github/workflows/daily.yml` |
-| Add a new source | drop a `fetch()` module in `src/sources/`, wire it in `src/main.py` |
+| Companies to track | `config/companies.yaml` |
+| Target cities | `preferred_locations` |
+| Fields to include (ml, ds, stats, quant, health, swe) | `job_types` |
+| Keep marketing and sales roles out | `exclude_title_keywords` |
+| Drop roles by grad year or "new grad" | `exclude_keywords` |
+| Internships only, or also full-time | `employment_types` in `hard_filters` |
+| Turn the location / recency / employment gates on or off | `hard_filters` |
+| How old a posting can be | `max_age_days` in `hard_filters` |
+| Weighting of recency vs. preferred city in the ranking | `scoring` |
+| Most roles in one email | `max_items` |
+| Send time | cron line in `.github/workflows/daily.yml` |
+| Add a source | new `fetch()` module in `src/sources/`, wired into `src/main.py` |
 
-## Notes
+## How it works
 
-- Only uses **official/public JSON APIs and published data files** — no scraping
-  of sites whose terms forbid it, no CAPTCHA solving.
-- `data/seen.json` is the memory of what's already been emailed; it's committed
-  back each run so the "new only" logic survives across days.
+Each run pulls every source, drops anything that isn't a student-level internship
+in one of your chosen fields and cities, removes duplicates and anything already
+emailed, then sends what's left ranked by topic match, recency, and preferred city.
+Every role is tagged Internship or Full-time along the way.
+
+Two things worth knowing:
+
+- It only reads public JSON APIs and published data files. No scraping of sites
+  that forbid it, and no CAPTCHAs.
+- `data/seen.json` records what has already gone out. The Actions job commits it
+  back after each run so you don't get repeats.
