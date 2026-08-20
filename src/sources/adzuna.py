@@ -12,13 +12,20 @@ from ._http import get_json
 
 API = "https://api.adzuna.com/v1/api/jobs/{country}/search/{page}"
 
-# broad queries; the relevance filter narrows to student-level topic matches
+# broad queries; the relevance filter narrows to student-level topic matches.
+# spans ML, data science/analytics/consulting, quant/finance, and medical.
 QUERIES = [
     "machine learning intern",
     "data science intern",
+    "data analyst intern",
+    "analytics consultant intern",
     "statistics intern",
+    "biostatistics intern",
+    "quantitative analyst intern",
+    "actuarial intern",
     "software engineer intern",
-    "quantitative intern",
+    "data scientist new grad",
+    "quantitative researcher new grad",
 ]
 
 

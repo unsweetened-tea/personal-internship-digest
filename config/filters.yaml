@@ -38,35 +38,81 @@ seniority_blocklist:
   - " iii"
 
 # ---- Topic buckets: keep only jobs matching at least one -------------------
+# Broadened to cover applied statistics / ML across industries: core ML & SWE,
+# plus data science & analytics (incl. consulting), quant & finance, and
+# medical / health data. A role is kept if it matches ANY enabled bucket.
 topics:
-  statistics:
-    - statistics
-    - statistical
-    - biostatistics
-    - biostatistician
-    - quantitative
-    - quant
-    - econometrics
-    - "data analyst"
   machine_learning:
     - "machine learning"
-    - " ml "
+    - "ml"
     - "ml engineer"
     - "deep learning"
     - "artificial intelligence"
-    - " ai "
-    - "data science"
-    - "data scientist"
+    - "ai"
     - "nlp"
     - "natural language"
     - "computer vision"
     - "research scientist"
     - "applied scientist"
+    - "mlops"
+
+  data_science:            # data science, analytics, and analytics consulting
+    - "data science"
+    - "data scientist"
+    - "data analyst"
+    - "data analytics"
+    - "analytics"
+    - "business intelligence"
+    - "decision scientist"
+    - "decision science"
+    - "research analyst"
+    - "analytics consultant"
+    - "data consultant"
+    - "product analyst"
+
+  statistics:
+    - statistics
+    - statistical
+    - statistician
+    - econometrics
+    - econometrician
+    - "applied statistics"
+    - "statistical analyst"
+
+  quant_finance:           # quant, trading, actuarial, risk (finance)
+    - quant
+    - quantitative
+    - "quantitative research"
+    - "quantitative analyst"
+    - "quantitative developer"
+    - "quantitative trader"
+    - trading
+    - "algorithmic trading"
+    - actuarial
+    - actuary
+    - "risk analyst"
+    - "financial engineer"
+    - "financial engineering"
+
+  health_data:             # medical / life-sciences applied stats & ML
+    - biostatistics
+    - biostatistician
+    - biostat
+    - epidemiology
+    - epidemiologist
+    - bioinformatics
+    - "computational biology"
+    - "clinical data"
+    - "clinical research"
+    - "health data"
+    - "health informatics"
+    - "health economics"
+
   software_engineering:
     - "software engineer"
     - "software engineering"
     - "software developer"
-    - " swe "
+    - "swe"
     - backend
     - "back end"
     - frontend
@@ -88,10 +134,14 @@ hard_filters:
   max_age_days: 30
   include_undated: true    # keep roles with no posted date (age can't be checked)?
 
-# Which job types to include. Use "all", or list any of:
-#   machine_learning (aliases: ml)  |  software_engineering (aliases: swe)
-#   statistics (aliases: stats)
-# A role must match at least one ENABLED type.
+# Which fields to include. Use "all", or list any of:
+#   machine_learning     (aliases: ml, ai)
+#   data_science         (aliases: ds, analytics, consulting)
+#   statistics           (aliases: stats)
+#   quant_finance        (aliases: quant, finance)
+#   health_data          (aliases: medical, health, biostat)
+#   software_engineering (aliases: swe)
+# A role must match at least one ENABLED field.
 job_types:
   - all
 

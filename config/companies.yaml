@@ -8,18 +8,27 @@
 #
 # Add/remove freely. Grouped by industry only for your own readability.
 
+# NOTE: tokens are best-effort — a wrong one just 404s and is skipped harmlessly.
+# Verify a company's token by opening its careers page and checking the ATS URL.
+
 greenhouse:
   # tech
   - stripe
   - databricks
   - airbnb
-  - robinhood       # finance-ish / fintech
   - cloudflare
-  # finance
+  # finance / fintech / quant
+  - robinhood
   - twosigma
-  # medical / health
+  - brex
+  - affirm
+  - sofi
+  # medical / health / biotech
   - tempus
   - benchling
+  - devoted
+  # consulting / analytics
+  - clarity-ai
 
 lever:
   - ramp
@@ -28,3 +37,4 @@ lever:
 ashby:
   - openai
   - ramp            # some companies list on multiple ATSs; dedupe handles it
+  - hex             # analytics

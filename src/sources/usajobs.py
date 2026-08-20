@@ -16,7 +16,10 @@ API = "https://data.usajobs.gov/api/search"
 QUERIES = [
     "data science intern",
     "statistics intern",
+    "biostatistics",
+    "epidemiology",
     "machine learning",
+    "actuarial",
 ]
 
 

@@ -13,10 +13,12 @@ import datetime as dt
 from ..models import Job
 from ._http import get_json
 
-# raw listings.json URLs (the "dev" branch carries the live data file)
+# raw listings.json URLs (the "dev" branch carries the live data file), paired
+# with the employment type each feed represents — an authoritative signal since
+# one repo is an internship list and the other a new-grad (full-time) list.
 FEEDS = [
-    "https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/.github/scripts/listings.json",
-    "https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/.github/scripts/listings.json",
+    ("https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/.github/scripts/listings.json", "internship"),
+    ("https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/.github/scripts/listings.json", "full-time"),
 ]
 
 
@@ -26,10 +28,10 @@ def _fmt_loc(locations) -> str:
     return str(locations or "")
 
 
-def fetch(feeds: list[str] | None = None) -> list[Job]:
+def fetch(feeds: list[tuple[str, str]] | None = None) -> list[Job]:
     feeds = feeds or FEEDS
     jobs: list[Job] = []
-    for feed in feeds:
+    for feed, employment in feeds:
         data = get_json(feed)
         if not data:
             continue
@@ -53,6 +55,7 @@ def fetch(feeds: list[str] | None = None) -> list[Job]:
                     posted_at=posted_str,
                     # these feeds carry no long description; title carries the signal
                     description=j.get("title", ""),
+                    employment=employment,
                 ).clean()
             )
             count += 1

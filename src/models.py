@@ -15,6 +15,7 @@ class Job:
     posted_at: str = ""               # ISO date string if known
     description: str = ""             # plain text, used for relevance scoring
     category: str = ""                # filled in by the relevance filter
+    employment: str = ""              # "internship" | "full-time" | "" (unknown)
     score: float = 0.0                # relevance score, higher = better
 
     # matched keyword buckets, for display + debugging

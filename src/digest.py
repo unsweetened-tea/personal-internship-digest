@@ -21,6 +21,18 @@ _CATS = {
         "label": "Machine Learning / AI", "emoji": "🤖",
         "accent": "#7c3aed", "soft": "#f5f3ff", "anchor": "cat-ml",
     },
+    "data_science": {
+        "label": "Data Science & Analytics", "emoji": "📈",
+        "accent": "#0d9488", "soft": "#f0fdfa", "anchor": "cat-ds",
+    },
+    "quant_finance": {
+        "label": "Quant & Finance", "emoji": "💹",
+        "accent": "#c2410c", "soft": "#fff7ed", "anchor": "cat-quant",
+    },
+    "health_data": {
+        "label": "Medical & Health Data", "emoji": "🧬",
+        "accent": "#db2777", "soft": "#fdf2f8", "anchor": "cat-health",
+    },
     "statistics": {
         "label": "Statistics", "emoji": "📊",
         "accent": "#0891b2", "soft": "#ecfeff", "anchor": "cat-stats",
@@ -30,12 +42,21 @@ _CATS = {
         "accent": "#2563eb", "soft": "#eff6ff", "anchor": "cat-swe",
     },
 }
-_ORDER = ["machine_learning", "statistics", "software_engineering"]
+# display + primary-bucket priority order (most specific/topical first)
+_ORDER = [
+    "machine_learning", "data_science", "quant_finance",
+    "health_data", "statistics", "software_engineering",
+]
 _FALLBACK = _CATS["software_engineering"]
 
 
 def _primary_bucket(job: Job) -> str:
-    return job.category.split(",")[0].strip() if job.category else "software_engineering"
+    """Pick the highest-priority bucket this job matched, for section grouping."""
+    hits = {b.strip() for b in job.category.split(",")} if job.category else set()
+    for bucket in _ORDER:
+        if bucket in hits:
+            return bucket
+    return "software_engineering"
 
 
 def _freshness(posted_at: str) -> tuple[str, str, str]:
@@ -78,6 +99,13 @@ def _card(job: Job, cat: dict) -> str:
             f"margin-left:6px;vertical-align:middle;\">{fresh_label}</span>"
         )
 
+    # employment tag (Internship / Full-time) — solid pill in the category accent
+    emp_tag = ""
+    if job.employment == "internship":
+        emp_tag = _emp_pill("Internship", "#ffffff", accent)
+    elif job.employment == "full-time":
+        emp_tag = _emp_pill("Full-time", accent, cat["soft"])
+
     return (
         f"<a href=\"{url}\" style=\"text-decoration:none;color:inherit;\">"
         "<div style=\"border-left:3px solid " + accent + ";background:#ffffff;"
@@ -85,10 +113,19 @@ def _card(job: Job, cat: dict) -> str:
         "border-radius:0 10px 10px 0;padding:12px 14px;margin:8px 0;\">"
         f"<div style=\"font-weight:600;font-size:15px;line-height:1.35;color:{accent};\">"
         f"{title}{badge}</div>"
-        f"<div style=\"margin-top:4px;font-size:13px;color:#111827;font-weight:500;\">{company}</div>"
+        f"<div style=\"margin-top:5px;\">{emp_tag}"
+        f"<span style=\"font-size:13px;color:#111827;font-weight:500;\">{company}</span></div>"
         f"<div style=\"margin-top:5px;font-size:12px;color:#6b7280;\">{meta}"
         f"<span style=\"color:#c3c7cf;\"> &nbsp;·&nbsp; {src}</span></div>"
         "</div></a>"
+    )
+
+
+def _emp_pill(text: str, fg: str, bg: str) -> str:
+    return (
+        f"<span style=\"display:inline-block;background:{bg};color:{fg};font-size:11px;"
+        f"font-weight:700;border-radius:6px;padding:2px 7px;margin-right:7px;"
+        f"vertical-align:middle;\">{text}</span>"
     )
 
 
@@ -189,9 +226,11 @@ def build_text(jobs: list[Job]) -> str:
         lines.append(f"== {cat['emoji']} {cat['label']} ({len(bjobs)}) ==")
         for j in bjobs:
             fresh = _freshness(j.posted_at)[0]
-            tag = f" [{fresh}]" if fresh else ""
+            emp = {"internship": "Internship", "full-time": "Full-time"}.get(j.employment, "")
+            tags = " ".join(t for t in (f"[{emp}]" if emp else "", f"[{fresh}]" if fresh else "") if t)
+            tags = f"  {tags}" if tags else ""
             loc = f" — {j.location}" if j.location else ""
-            lines.append(f"• {j.title}{tag}")
+            lines.append(f"• {j.title}{tags}")
             lines.append(f"  {j.company}{loc}  ({j.source})")
             lines.append(f"  {j.url}")
         lines.append("")

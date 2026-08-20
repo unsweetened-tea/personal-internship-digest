@@ -46,12 +46,25 @@ _TOPIC_ALIASES = {
     "machine_learning": "machine_learning",
     "machine learning": "machine_learning",
     "ai": "machine_learning",
-    "swe": "software_engineering",
-    "software_engineering": "software_engineering",
-    "software engineering": "software_engineering",
+    "ds": "data_science",
+    "data_science": "data_science",
+    "data science": "data_science",
+    "analytics": "data_science",
+    "consulting": "data_science",
     "stats": "statistics",
     "stat": "statistics",
     "statistics": "statistics",
+    "quant": "quant_finance",
+    "quant_finance": "quant_finance",
+    "finance": "quant_finance",
+    "medical": "health_data",
+    "health": "health_data",
+    "health_data": "health_data",
+    "biostat": "health_data",
+    "bio": "health_data",
+    "swe": "software_engineering",
+    "software_engineering": "software_engineering",
+    "software engineering": "software_engineering",
 }
 
 
@@ -94,6 +107,31 @@ def _any_in(needles: list[str], haystack: str) -> list[str]:
         if term and _pattern(term).search(haystack):
             hits.append(n)
     return hits
+
+
+_INTERN_WORDS = [
+    "intern", "internship", "co-op", "coop", "summer analyst",
+    "summer associate", "summer intern", "industrial placement",
+]
+_FULLTIME_WORDS = [
+    "new grad", "new graduate", "entry level", "entry-level", "campus hire",
+    "university graduate", "early career", "early-career", "full-time",
+    "full time", "graduate program", "rotational",
+]
+
+
+def classify_employment(job: Job) -> str:
+    """Return 'internship' / 'full-time' / '' — trusting any source-set value."""
+    if job.employment:                      # authoritative (e.g. github-list feed)
+        return job.employment
+    title = _norm(job.title)
+    body = _norm(f"{job.title} {job.description}")
+    # internship signal wins if present (title first, then body)
+    if _any_in(_INTERN_WORDS, title) or _any_in(_INTERN_WORDS, body):
+        return "internship"
+    if _any_in(_FULLTIME_WORDS, title) or _any_in(_FULLTIME_WORDS, body):
+        return "full-time"
+    return ""
 
 
 def relevant(job: Job, cfg: dict) -> bool:
@@ -165,6 +203,7 @@ def relevant(job: Job, cfg: dict) -> bool:
 
     job.category = ", ".join(sorted(set(hit_buckets)))
     job.matched = sorted(set(matched_topics + level_in_title + level_in_body))
+    job.employment = classify_employment(job)
     job.score = score
     return True
 
