@@ -49,11 +49,16 @@ exclude_title_keywords:
   - "brand "
 
 # Reject by TITLE or DESCRIPTION — roles you're not eligible for. You graduate in
-# 2029, so drop new-grad roles and anything targeting the classes of 2027 / 2028.
-# (Season phrases like "Summer 2027" are NOT listed, so those internships stay.)
+# 2029, so drop generic new-grad postings. (Season phrases like "Summer 2027" are
+# NOT listed, so those internships stay.)
 exclude_keywords:
   - "new grad"
   - "new graduate"
+
+# Grad-year targeting. A role is dropped if it names one of these off classes,
+# UNLESS it also lists one of eligible_grad_years below — so a posting for the
+# "Class of 2027-2029" or "graduating 2028 or 2029" is kept, since 2029 is you.
+exclude_grad_years:
   - "class of 2027"
   - "class of 2028"
   - "graduating 2027"
@@ -66,6 +71,12 @@ exclude_keywords:
   - "2028 grad"
   - "2027 graduate"
   - "2028 graduate"
+
+# If any of these appear anywhere in the role, the exclude_grad_years rule above
+# is waived (you're eligible). Add 2030 etc. as you progress.
+eligible_grad_years:
+  - "2029"
+  - "2030"
 
 # ---- Topic buckets: keep only jobs matching at least one -------------------
 # Broadened to cover applied statistics / ML across industries: core ML & SWE,

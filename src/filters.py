@@ -161,10 +161,15 @@ def relevant(job: Job, cfg: dict) -> bool:
     if _any_in(cfg.get("exclude_title_keywords", []), title):
         return False
 
-    # 1c) reject roles you're ineligible for by grad year (title OR description),
-    #     e.g. "new grad" / "class of 2027" when you graduate later.
+    # 1c) reject generic roles you're ineligible for (e.g. "new grad").
     if _any_in(cfg.get("exclude_keywords", []), body):
         return False
+
+    # 1d) grad-year targeting: drop off-class-year roles UNLESS the posting also
+    #     lists an eligible year (e.g. "Class of 2027-2029" stays because of 2029).
+    if _any_in(cfg.get("exclude_grad_years", []), body):
+        if not _any_in(cfg.get("eligible_grad_years", []), body):
+            return False
 
     # 2) must look student / early-career.
     #    - github-list feeds are already curated internship/new-grad lists, so the
