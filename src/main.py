@@ -8,6 +8,7 @@ Run locally:
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import os
 from pathlib import Path
 
@@ -77,9 +78,17 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
         print(f"Seeded {len(matched)} roles as seen. Future runs email only new ones.")
         return 0
 
-    to_send = matched if send_all else only_new(matched, seen)
-    to_send = to_send[: filters_cfg.get("max_items", 60)]
-    print(f"{len(to_send)} to include in digest ({'all' if send_all else 'new only'}).")
+    today = dt.date.today().isoformat()
+    cap = filters_cfg.get("max_items", 60)
+
+    # Pick what to email. In normal mode only roles we haven't sent before are
+    # candidates; if there are more than the cap, the rest stay unseen and get
+    # picked up on following runs (the backlog drains instead of being dropped).
+    fresh = [] if send_all else [j for j in matched if j.id not in seen]
+    to_send = (matched if send_all else fresh)[:cap]
+    queued = 0 if send_all else max(0, len(fresh) - len(to_send))
+    print(f"{len(to_send)} to include in digest "
+          f"({'all' if send_all else f'new; {queued} more queued for later'}).")
 
     html_body = digest.build_html(to_send)
     text_body = digest.build_text(to_send)
@@ -90,10 +99,21 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
         print(f"Dry run — preview written to {PREVIEW_FILE}")
         return 0
 
+    def _persist() -> None:
+        # keep still-matching, already-seen roles alive so they aren't pruned and
+        # re-emailed later; mark only the roles we actually sent as seen. Unsent
+        # fresh roles stay unseen on purpose so the next run emails them.
+        for j in matched:
+            if j.id in seen:
+                seen[j.id] = today
+        for j in to_send:
+            seen[j.id] = today
+        save_seen(SEEN_FILE, seen)
+
     if not to_send:
         print("Nothing new — skipping email.")
         if not send_all:
-            save_seen(SEEN_FILE, seen)
+            _persist()
         return 0
 
     # Only import/send if we actually have something and creds are present.
@@ -103,11 +123,14 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
 
     from . import email_gmail
 
-    subject = f"🎓 {len(to_send)} new internship match{'es' if len(to_send) != 1 else ''}"
+    n = len(to_send)
+    subject = f"🎓 {n} new internship match{'es' if n != 1 else ''}"
+    if queued:
+        subject += f" (+{queued} more queued)"
     email_gmail.send(subject, html_body, text_body)
 
     if not send_all:
-        save_seen(SEEN_FILE, seen)
+        _persist()
     return 0
 
 
