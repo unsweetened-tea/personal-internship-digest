@@ -195,6 +195,7 @@ job_types:
 # to the top. Substring match on the job's location (case-insensitive), so
 # "New York" also catches "New York City, NY". Add/remove freely.
 preferred_locations:
+  # original targets
   - "Palo Alto"
   - "Menlo Park"
   - "Mountain View"
@@ -203,6 +204,19 @@ preferred_locations:
   - "NYC"
   - "Indianapolis"
   - "Remote"
+  # added tech / finance / consulting / medical hubs
+  - "San Francisco"
+  - "San Jose"
+  - "Seattle"
+  - "Boston"
+  - "Cambridge"        # Boston-area (biotech / medical)
+  - "Austin"
+  - "Chicago"
+  - "Los Angeles"
+  - "Atlanta"
+  - "Washington"       # DC
+  - "Sunnyvale"        # Bay Area
+  - "Santa Clara"      # Bay Area
 
 # Scoring: bonus points so the best-matching roles float to the top of the email.
 scoring:
