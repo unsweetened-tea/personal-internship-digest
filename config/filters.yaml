@@ -172,7 +172,7 @@ hard_filters:
   by_location: true        # only roles in preferred_locations (below) are kept
   include_unlocated: false # keep roles whose location is blank/unknown?
   by_recency: true         # only roles posted within max_age_days are kept
-  max_age_days: 30
+  max_age_days: 7          # only postings from the last week
   include_undated: true    # keep roles with no posted date (age can't be checked)?
   # Which employment types to keep. You graduate in 2029, so internships only.
   # Change to [internship, full-time] or "all" later when you want new-grad roles.
