@@ -9,7 +9,9 @@ Sources (all public or official, nothing that breaks a site's terms of use):
 
 - Company job boards on Greenhouse, Lever, and Ashby. These read the same JSON
   their own careers pages load. The list is in `config/companies.yaml`.
-- Community internship lists from Simplify (their `listings.json` files).
+- Community listing repos that publish a `listings.json` (Simplify's Internships
+  and New-Grad feeds, plus an underclassmen-opportunities feed). Feeds marked
+  "evergreen" skip the age filter, since their dates are just when they were added.
 - Adzuna and USAJobs search APIs. Optional, and need free keys.
 
 It runs on GitHub Actions at no cost and sends the mail through the Gmail API.

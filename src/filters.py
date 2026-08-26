@@ -90,6 +90,8 @@ def _passes_recency(job: Job, cfg: dict) -> bool:
     hf = cfg.get("hard_filters", {})
     if not hf.get("by_recency"):
         return True
+    if job.evergreen:            # rolling programs: age-gate doesn't apply
+        return True
     if not job.posted_at:
         return bool(hf.get("include_undated", True))
     try:

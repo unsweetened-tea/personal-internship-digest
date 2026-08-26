@@ -16,6 +16,7 @@ class Job:
     description: str = ""             # plain text, used for relevance scoring
     category: str = ""                # filled in by the relevance filter
     employment: str = ""              # "internship" | "full-time" | "" (unknown)
+    evergreen: bool = False           # skip the recency age-gate (rolling programs)
     score: float = 0.0                # relevance score, higher = better
 
     # matched keyword buckets, for display + debugging

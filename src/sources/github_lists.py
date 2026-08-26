@@ -13,12 +13,15 @@ import datetime as dt
 from ..models import Job
 from ._http import get_json
 
-# raw listings.json URLs (the "dev" branch carries the live data file), paired
-# with the employment type each feed represents — an authoritative signal since
-# one repo is an internship list and the other a new-grad (full-time) list.
+# Each feed: (raw listings.json URL, employment type, evergreen?).
+#   - employment: authoritative label for the feed (internship vs new-grad).
+#   - evergreen: True skips the recency age-gate — for curated program lists whose
+#     "date_posted" is just when they were added, not a fresh posting date.
 FEEDS = [
-    ("https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/.github/scripts/listings.json", "internship"),
-    ("https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/.github/scripts/listings.json", "full-time"),
+    ("https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/.github/scripts/listings.json", "internship", False),
+    ("https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/.github/scripts/listings.json", "full-time", False),
+    # Underclassmen (freshman/sophomore) opportunities — rolling programs, so evergreen.
+    ("https://raw.githubusercontent.com/Jose-Gael-Cruz-Lopez/underclassmen-opportunities/main/.github/scripts/listings.json", "internship", True),
 ]
 
 
@@ -28,10 +31,10 @@ def _fmt_loc(locations) -> str:
     return str(locations or "")
 
 
-def fetch(feeds: list[tuple[str, str]] | None = None) -> list[Job]:
+def fetch(feeds: list[tuple[str, str, bool]] | None = None) -> list[Job]:
     feeds = feeds or FEEDS
     jobs: list[Job] = []
-    for feed, employment in feeds:
+    for feed, employment, evergreen in feeds:
         data = get_json(feed)
         if not data:
             continue
@@ -56,6 +59,7 @@ def fetch(feeds: list[tuple[str, str]] | None = None) -> list[Job]:
                     # these feeds carry no long description; title carries the signal
                     description=j.get("title", ""),
                     employment=employment,
+                    evergreen=evergreen,
                 ).clean()
             )
             count += 1
