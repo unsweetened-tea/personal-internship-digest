@@ -85,16 +85,36 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
     # Pick what to email. In normal mode only roles we haven't sent before are
     # candidates; if there are more than the cap, the rest stay unseen and get
     # picked up on following runs (the backlog drains instead of being dropped).
+    def _pdate(s: str):
+        try:
+            return dt.date.fromisoformat(s[:10]) if s else None
+        except ValueError:
+            return None
+
     def _due(j) -> bool:
         last = seen.get(j.id)
         if last is None:
-            return True                       # never sent
-        if j.recur_days:                      # recurring: due again after N days
-            try:
-                return (dt.date.today() - dt.date.fromisoformat(last)).days >= j.recur_days
-            except ValueError:
+            return True                       # never sent -> show once (or on open)
+        last_d = _pdate(last)
+        if last_d is None:
+            return True
+        today = dt.date.today()
+        opens, closes = _pdate(j.opens), _pdate(j.closes)
+
+        # Program with an application window: show once, then only reopen when the
+        # window opens; while open, repeat every recur_days (7) until it closes.
+        if opens or closes:
+            is_open = (opens is None or opens <= today) and (closes is None or today <= closes)
+            if not is_open:
+                return False                  # already shown; wait for it to open
+            if opens and last_d < opens:      # it opened since we last showed it
                 return True
-        return False                          # one-time role already sent
+            return (today - last_d).days >= (j.recur_days or 7)
+
+        # No window: recur every recur_days, or show once (recur_days == 0).
+        if j.recur_days:
+            return (today - last_d).days >= j.recur_days
+        return False
 
     fresh = [] if send_all else [j for j in matched if _due(j)]
     pool = matched if send_all else fresh

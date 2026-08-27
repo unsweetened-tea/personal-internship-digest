@@ -21,9 +21,10 @@ _VALID_BUCKETS = {
 }
 # curated programs rank prominently but below the very freshest scored roles
 _PROGRAM_SCORE = 20.0
-# how often a program resurfaces after being sent (per-entry `recurring_days`
-# overrides this; set an entry to 0 to show it only once)
-_DEFAULT_RECUR_DAYS = 30
+# While a program's application window is OPEN it resurfaces on this cadence
+# (per-entry `recurring_days` overrides it). Without a window, a program shows
+# once. See main._due() for the full open/closed behavior.
+_OPEN_RECUR_DAYS = 7
 
 
 def fetch(path: Path | None = None) -> list[Job]:
@@ -38,6 +39,11 @@ def fetch(path: Path | None = None) -> list[Job]:
         bucket = str(p.get("topic", "")).strip()
         if bucket not in _VALID_BUCKETS:
             bucket = "software_engineering"
+        opens = str(p.get("opens", "")).strip()
+        closes = str(p.get("closes", "")).strip()
+        has_window = bool(opens or closes)
+        # windowed programs recur weekly while open; window-less ones show once
+        recur = int(p.get("recurring_days", _OPEN_RECUR_DAYS if has_window else 0))
         job = Job(
             title=p["title"],
             company=p.get("company", ""),
@@ -48,7 +54,9 @@ def fetch(path: Path | None = None) -> list[Job]:
             employment="discovery",
             evergreen=True,
             category=bucket,
-            recur_days=int(p.get("recurring_days", _DEFAULT_RECUR_DAYS)),
+            recur_days=recur,
+            opens=opens,
+            closes=closes,
         ).clean()
         job.score = _PROGRAM_SCORE
         jobs.append(job)

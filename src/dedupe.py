@@ -11,7 +11,9 @@ from pathlib import Path
 
 from .models import Job
 
-_PRUNE_AFTER_DAYS = 60
+# long enough that a curated program waiting months for its window to open isn't
+# forgotten and re-shown as "new" before it reopens
+_PRUNE_AFTER_DAYS = 180
 
 
 def load_seen(path: Path) -> dict[str, str]:

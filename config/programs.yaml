@@ -5,11 +5,21 @@
 # roles, entries here BYPASS the topic/location/recency filters — you curated
 # them, so they're pre-approved. They're labeled "Discovery" in the digest.
 #
-# Fields: company, title, url  (required) | location, topic, recurring_days (optional).
+# Fields: company, title, url  (required) | location, topic, opens, closes, recurring_days
 #   topic groups it in the email; one of:
 #   machine_learning | data_science | statistics | quant_finance | health_data | software_engineering
-#   recurring_days: resurface the program this many days after it was last sent
-#     (default 30). Set to 0 to show it only once.
+#
+# Recurrence behavior:
+#   - No window (no opens/closes): the program shows ONCE.
+#   - With an application window (opens/closes, ISO dates YYYY-MM-DD): it shows
+#     once, then stays quiet until the window opens; while OPEN it repeats every
+#     `recurring_days` days (default 7) until `closes`, then goes quiet again.
+#   Set opens to a past date + a future closes to make one recur now. Omit closes
+#   for an open-ended window. `recurring_days: 0` forces show-once.
+#
+#   Example — a program open now through Nov 15, pinging weekly:
+#     opens: 2026-08-01
+#     closes: 2026-11-15
 #
 # Add or remove freely. URLs verified 2026-08; update if a firm moves a page.
 

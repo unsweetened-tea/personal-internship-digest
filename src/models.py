@@ -18,6 +18,8 @@ class Job:
     employment: str = ""              # "internship" | "full-time" | "" (unknown)
     evergreen: bool = False           # skip the recency age-gate (rolling programs)
     recur_days: int = 0               # 0 = show once; >0 = resurface every N days
+    opens: str = ""                   # ISO date the application window opens
+    closes: str = ""                  # ISO date the application window closes
     score: float = 0.0                # relevance score, higher = better
 
     # matched keyword buckets, for display + debugging
