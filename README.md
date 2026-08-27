@@ -73,7 +73,8 @@ Everything is in `config/filters.yaml` unless the row says otherwise.
 | Fields to include (ml, ds, stats, quant, health, swe) | `job_types` |
 | Keep marketing and sales roles out | `exclude_title_keywords` |
 | Drop roles by grad year or "new grad" | `exclude_keywords` |
-| Internships only, or also full-time | `employment_types` in `hard_filters` |
+| Opportunity types (internship, discovery, full-time) | `employment_types` in `hard_filters` |
+| What counts as a discovery/insight program | `discovery_keywords` |
 | Turn the location / recency / employment gates on or off | `hard_filters` |
 | How old a posting can be | `max_age_days` in `hard_filters` |
 | Weighting of recency vs. preferred city in the ranking | `scoring` |
@@ -86,7 +87,8 @@ Everything is in `config/filters.yaml` unless the row says otherwise.
 Each run pulls every source, drops anything that isn't a student-level internship
 in one of your chosen fields and cities, removes duplicates and anything already
 emailed, then sends what's left ranked by topic match, recency, and preferred city.
-Every role is tagged Internship or Full-time along the way.
+Every role is tagged Internship, Discovery, or Full-time along the way. Discovery
+programs (year-round insight/exploration programs) skip the age filter.
 
 Two things worth knowing:
 

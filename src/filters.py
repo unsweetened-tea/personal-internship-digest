@@ -136,14 +136,25 @@ _FULLTIME_WORDS = [
 ]
 
 
-def classify_employment(job: Job) -> str:
-    """Return 'internship' / 'full-time' / '' — trusting any source-set value."""
-    if job.employment:                      # authoritative (e.g. github-list feed)
-        return job.employment
+def classify_employment(job: Job, cfg: dict | None = None) -> str:
+    """Return 'internship' / 'discovery' / 'full-time' / '' for a role.
+
+    'discovery' = year-round insight/exploration programs (often for freshmen &
+    sophomores, e.g. Jane Street–style). Detected by cfg['discovery_keywords'].
+    """
+    cfg = cfg or {}
+    disc = cfg.get("discovery_keywords", [])
     title = _norm(job.title)
     body = _norm(f"{job.title} {job.description}")
-    # internship signal wins if present (title first, then body)
-    if _any_in(_INTERN_WORDS, title) or _any_in(_INTERN_WORDS, body):
+    # internship is the most specific/actionable signal -> check the title first
+    if _any_in(_INTERN_WORDS, title):
+        return "internship"
+    # discovery / insight / exploration programs (year-round)
+    if disc and (_any_in(disc, title) or _any_in(disc, body)):
+        return "discovery"
+    if job.employment:                      # feed-set default (e.g. github-list)
+        return job.employment
+    if _any_in(_INTERN_WORDS, body):
         return "internship"
     if _any_in(_FULLTIME_WORDS, title) or _any_in(_FULLTIME_WORDS, body):
         return "full-time"
@@ -178,7 +189,10 @@ def relevant(job: Job, cfg: dict) -> bool:
     #      list itself is the level signal (their titles often omit "intern").
     #    - every other source: require a level word IN THE TITLE. Matching the long
     #      description body caused senior/full-time roles to leak in via boilerplate.
-    level_in_title = _any_in(cfg["level_keywords"], title)
+    #    Discovery-program terms also count as a student-level signal (they rarely
+    #    say "intern" in the title).
+    level_in_title = (_any_in(cfg["level_keywords"], title)
+                      or _any_in(cfg.get("discovery_keywords", []), title))
     if job.source == "github-list":
         level_in_body = level_in_title  # trusted list; body==title for these anyway
     else:
@@ -187,7 +201,9 @@ def relevant(job: Job, cfg: dict) -> bool:
         level_in_body = level_in_title
 
     # 3) hard filters: location + recency + employment type (fail fast)
-    job.employment = classify_employment(job)
+    job.employment = classify_employment(job, cfg)
+    if job.employment == "discovery":
+        job.evergreen = True            # year-round programs bypass the age-gate
     if not _passes_location(job, cfg):
         return False
     if not _passes_recency(job, cfg):

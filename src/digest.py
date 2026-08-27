@@ -99,10 +99,12 @@ def _card(job: Job, cat: dict) -> str:
             f"margin-left:6px;vertical-align:middle;\">{fresh_label}</span>"
         )
 
-    # employment tag (Internship / Full-time) — solid pill in the category accent
+    # employment tag — solid pill in the category accent
     emp_tag = ""
     if job.employment == "internship":
         emp_tag = _emp_pill("Internship", "#ffffff", accent)
+    elif job.employment == "discovery":
+        emp_tag = _emp_pill("Discovery", "#ffffff", "#4f46e5")  # distinct indigo
     elif job.employment == "full-time":
         emp_tag = _emp_pill("Full-time", accent, cat["soft"])
 
@@ -226,7 +228,8 @@ def build_text(jobs: list[Job]) -> str:
         lines.append(f"== {cat['emoji']} {cat['label']} ({len(bjobs)}) ==")
         for j in bjobs:
             fresh = _freshness(j.posted_at)[0]
-            emp = {"internship": "Internship", "full-time": "Full-time"}.get(j.employment, "")
+            emp = {"internship": "Internship", "discovery": "Discovery",
+                   "full-time": "Full-time"}.get(j.employment, "")
             tags = " ".join(t for t in (f"[{emp}]" if emp else "", f"[{fresh}]" if fresh else "") if t)
             tags = f"  {tags}" if tags else ""
             loc = f" — {j.location}" if j.location else ""

@@ -55,6 +55,31 @@ exclude_keywords:
   - "new grad"
   - "new graduate"
 
+# Discovery / insight / exploration programs — year-round early-career programs
+# (often aimed at freshmen & sophomores, e.g. Jane Street–style). Roles whose
+# title/description match these are labeled "discovery", count as student-level,
+# and skip the recency age-gate (they run all year, not a dated posting).
+discovery_keywords:
+  - "discovery program"
+  - "discovery day"
+  - "discovery weekend"
+  - "insight program"
+  - "insight day"
+  - "insight week"
+  - "spring week"
+  - "spring insight"
+  - externship
+  - "fellowship program"
+  - "first year"
+  - "first-year"
+  - sophomore
+  - freshman
+  - underclassmen
+  - "early insight"
+  - "immersion program"
+  - "exploration program"
+  - "pathways program"
+
 # Grad-year targeting. A role is dropped if it names one of these off classes,
 # UNLESS it also lists one of eligible_grad_years below — so a posting for the
 # "Class of 2027-2029" or "graduating 2028 or 2029" is kept, since 2029 is you.
@@ -174,10 +199,12 @@ hard_filters:
   by_recency: true         # only roles posted within max_age_days are kept
   max_age_days: 7          # only postings from the last week
   include_undated: true    # keep roles with no posted date (age can't be checked)?
-  # Which employment types to keep. You graduate in 2029, so internships only.
-  # Change to [internship, full-time] or "all" later when you want new-grad roles.
+  # Which opportunity types to keep. You graduate in 2029, so: summer internships
+  # and year-round discovery programs. Add "full-time" later for new-grad roles,
+  # or set to "all".
   employment_types:
     - internship
+    - discovery
   include_unknown_employment: false  # drop roles we can't confidently classify
 
 # Which fields to include. Use "all", or list any of:
