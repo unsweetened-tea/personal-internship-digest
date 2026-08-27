@@ -1,27 +1,24 @@
-# Curated discovery / insight programs to ALWAYS surface (once each, until seen).
+# Curated discovery / insight programs.
 #
-# These are hand-picked early-career programs at firms whose own sites don't
-# publish a machine-readable feed, so they can't be scraped. Unlike scraped
-# roles, entries here BYPASS the topic/location/recency filters — you curated
-# them, so they're pre-approved. They're labeled "Discovery" in the digest.
+# Hand-picked early-career programs at firms whose own sites don't publish a
+# machine-readable feed, so they can't be scraped. Entries here BYPASS the
+# topic/location/recency filters (you curated them) and are labeled "Discovery".
 #
 # Fields: company, title, url  (required) | location, topic, opens, closes, recurring_days
 #   topic groups it in the email; one of:
 #   machine_learning | data_science | statistics | quant_finance | health_data | software_engineering
 #
-# Recurrence behavior:
+# Recurrence behavior (curated programs only — never internships):
 #   - No window (no opens/closes): the program shows ONCE.
 #   - With an application window (opens/closes, ISO dates YYYY-MM-DD): it shows
 #     once, then stays quiet until the window opens; while OPEN it repeats every
 #     `recurring_days` days (default 7) until `closes`, then goes quiet again.
-#   Set opens to a past date + a future closes to make one recur now. Omit closes
-#   for an open-ended window. `recurring_days: 0` forces show-once.
+#   Omit closes for an open-ended window. `recurring_days: 0` forces show-once.
 #
-#   Example — a program open now through Nov 15, pinging weekly:
-#     opens: 2026-08-01
-#     closes: 2026-11-15
-#
-# Add or remove freely. URLs verified 2026-08; update if a firm moves a page.
+# ⚠️ The opens/closes dates below are ESTIMATES for the 2026-27 (Summer 2027)
+# cycle, extrapolated from each firm's prior-year dates. Firms shift these yearly
+# and some recruit on a rolling basis — verify on the linked page and correct as
+# you learn the real dates. URLs verified 2026-08.
 
 # ---- Quant / trading firms ----
 - company: Jane Street
@@ -29,66 +26,92 @@
   url: https://www.janestreet.com/join-jane-street/programs-and-events/focus/
   location: NYC
   topic: quant_finance
+  opens: 2026-09-01
+  closes: 2026-10-31
 - company: Jane Street
   title: IN FOCUS Program (undergraduate)
   url: https://www.janestreet.com/join-jane-street/programs-and-events/in-focus/
   location: NYC
   topic: quant_finance
+  opens: 2026-09-01
+  closes: 2026-10-31
 - company: Jane Street
   title: FTTP — First-Year Trading & Technology Program
   url: https://www.janestreet.com/join-jane-street/programs-and-events/fttp/
   location: NYC
   topic: quant_finance
+  opens: 2026-09-01
+  closes: 2026-11-30
 - company: Citadel
   title: Discover Citadel (first & second year)
   url: https://www.citadel.com/careers/programs-and-events/discover-citadel/
   location: NYC
   topic: quant_finance
+  opens: 2026-11-01
+  closes: 2027-03-06
 - company: Citadel Securities
   title: Discover Citadel Securities
   url: https://www.citadelsecurities.com/careers/programs-and-events/discover-citadel-securities/
   location: NYC
   topic: quant_finance
+  opens: 2026-11-01
+  closes: 2027-03-06
 - company: Two Sigma
   title: Undergraduate Programs
   url: https://www.twosigma.com/undergraduate-students/
   location: NYC
   topic: quant_finance
+  opens: 2026-09-01
+  closes: 2027-02-28
 - company: Jump Trading
   title: Students & New Grads Programs
   url: https://www.jumptrading.com/hr/students-new-grads
   location: Chicago
   topic: quant_finance
+  opens: 2026-08-01          # rolling; treated as open through recruiting season
+  closes: 2027-04-30
 - company: Hudson River Trading
   title: Explore HRT / Inside HRT (first & second year)
   url: https://www.hudsonrivertrading.com/student-opportunities/
   location: NYC
   topic: quant_finance
+  opens: 2026-12-01
+  closes: 2027-03-26
 - company: D. E. Shaw
   title: Discovery Fellowship (sophomore)
   url: https://www.deshaw.com/careers/internships
   location: NYC
   topic: quant_finance
+  opens: 2026-10-01
+  closes: 2027-01-03
 - company: Point72
   title: Point72 Academy
   url: https://point72.com/point72-academy/
   location: NYC
   topic: quant_finance
+  opens: 2026-09-01
+  closes: 2027-01-31
 - company: Susquehanna (SIG)
   title: Discovery Day Programs (first & second year)
   url: https://careers.sig.com/us-discovery-programs/jobs
   location: Philadelphia
   topic: quant_finance
+  opens: 2026-08-15          # fall discovery days; open now
+  closes: 2026-11-15
 - company: Goldman Sachs
   title: Possibilities Series (first-year)
   url: https://www.goldmansachs.com/careers/students/programs-and-internships/americas/possibilities-series
   location: NYC
   topic: quant_finance
+  opens: 2026-12-01
+  closes: 2027-02-28
 - company: Goldman Sachs
   title: Emerging Leaders Series (sophomore)
   url: https://www.goldmansachs.com/careers/students/programs-and-internships/americas/emerging-leaders-series
   location: NYC
   topic: quant_finance
+  opens: 2026-12-01
+  closes: 2027-02-28
 
 # ---- Big tech ----
 - company: Microsoft
@@ -96,13 +119,19 @@
   url: https://careers.microsoft.com/students
   location: Multiple
   topic: software_engineering
+  opens: 2026-09-01
+  closes: 2027-01-31
 - company: Google
   title: STEP Internship (first & second year)
   url: https://buildyourfuture.withgoogle.com/programs/step
   location: Multiple
   topic: software_engineering
+  opens: 2026-09-01
+  closes: 2026-11-15
 - company: Meta
   title: Meta University (first & second year)
   url: https://www.metacareers.com/careerprograms/pathways/metauniversity
   location: Multiple
   topic: software_engineering
+  opens: 2026-09-01
+  closes: 2026-12-01
