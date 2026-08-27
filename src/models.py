@@ -17,6 +17,7 @@ class Job:
     category: str = ""                # filled in by the relevance filter
     employment: str = ""              # "internship" | "full-time" | "" (unknown)
     evergreen: bool = False           # skip the recency age-gate (rolling programs)
+    recur_days: int = 0               # 0 = show once; >0 = resurface every N days
     score: float = 0.0                # relevance score, higher = better
 
     # matched keyword buckets, for display + debugging

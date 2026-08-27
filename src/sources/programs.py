@@ -21,6 +21,9 @@ _VALID_BUCKETS = {
 }
 # curated programs rank prominently but below the very freshest scored roles
 _PROGRAM_SCORE = 20.0
+# how often a program resurfaces after being sent (per-entry `recurring_days`
+# overrides this; set an entry to 0 to show it only once)
+_DEFAULT_RECUR_DAYS = 30
 
 
 def fetch(path: Path | None = None) -> list[Job]:
@@ -45,6 +48,7 @@ def fetch(path: Path | None = None) -> list[Job]:
             employment="discovery",
             evergreen=True,
             category=bucket,
+            recur_days=int(p.get("recurring_days", _DEFAULT_RECUR_DAYS)),
         ).clean()
         job.score = _PROGRAM_SCORE
         jobs.append(job)

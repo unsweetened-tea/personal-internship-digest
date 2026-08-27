@@ -5,9 +5,11 @@
 # roles, entries here BYPASS the topic/location/recency filters — you curated
 # them, so they're pre-approved. They're labeled "Discovery" in the digest.
 #
-# Fields: company, title, url  (required) | location, topic (optional).
+# Fields: company, title, url  (required) | location, topic, recurring_days (optional).
 #   topic groups it in the email; one of:
 #   machine_learning | data_science | statistics | quant_finance | health_data | software_engineering
+#   recurring_days: resurface the program this many days after it was last sent
+#     (default 30). Set to 0 to show it only once.
 #
 # Add or remove freely. URLs verified 2026-08; update if a firm moves a page.
 

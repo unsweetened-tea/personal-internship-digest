@@ -85,7 +85,18 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
     # Pick what to email. In normal mode only roles we haven't sent before are
     # candidates; if there are more than the cap, the rest stay unseen and get
     # picked up on following runs (the backlog drains instead of being dropped).
-    fresh = [] if send_all else [j for j in matched if j.id not in seen]
+    def _due(j) -> bool:
+        last = seen.get(j.id)
+        if last is None:
+            return True                       # never sent
+        if j.recur_days:                      # recurring: due again after N days
+            try:
+                return (dt.date.today() - dt.date.fromisoformat(last)).days >= j.recur_days
+            except ValueError:
+                return True
+        return False                          # one-time role already sent
+
+    fresh = [] if send_all else [j for j in matched if _due(j)]
     pool = matched if send_all else fresh
     # Curated discovery programs always make the cut (they're shown once); fill
     # the remaining slots with the top scored roles, then re-sort for display.
@@ -111,7 +122,10 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
         # re-emailed later; mark only the roles we actually sent as seen. Unsent
         # fresh roles stay unseen on purpose so the next run emails them.
         for j in matched:
-            if j.id in seen:
+            # refresh still-open one-time roles so they aren't pruned & re-emailed;
+            # skip recurring programs, or their clock would reset every run and
+            # they'd never age back into view.
+            if j.id in seen and not j.recur_days:
                 seen[j.id] = today
         for j in to_send:
             seen[j.id] = today
