@@ -18,7 +18,7 @@ from . import digest
 from .dedupe import dedupe, load_seen, only_new, save_seen
 from .filters import filter_jobs, sort_key
 from .models import Job
-from .sources import adzuna, ashby, github_lists, greenhouse, lever, usajobs
+from .sources import adzuna, ashby, github_lists, greenhouse, lever, programs, usajobs
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG = ROOT / "config"
@@ -64,9 +64,10 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
 
     raw = collect()
     matched = filter_jobs(raw, filters_cfg)
+    matched += programs.fetch()      # curated discovery programs (pre-approved)
     matched = dedupe(matched)
     matched.sort(key=sort_key, reverse=True)
-    print(f"{len(matched)} roles matched relevance filters.")
+    print(f"{len(matched)} roles after filters + curated programs.")
 
     seen = load_seen(SEEN_FILE)
 
@@ -85,7 +86,13 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
     # candidates; if there are more than the cap, the rest stay unseen and get
     # picked up on following runs (the backlog drains instead of being dropped).
     fresh = [] if send_all else [j for j in matched if j.id not in seen]
-    to_send = (matched if send_all else fresh)[:cap]
+    pool = matched if send_all else fresh
+    # Curated discovery programs always make the cut (they're shown once); fill
+    # the remaining slots with the top scored roles, then re-sort for display.
+    progs = [j for j in pool if j.source == "program"]
+    others = [j for j in pool if j.source != "program"]
+    to_send = (progs + others[: max(0, cap - len(progs))])[:cap]
+    to_send.sort(key=sort_key, reverse=True)
     queued = 0 if send_all else max(0, len(fresh) - len(to_send))
     print(f"{len(to_send)} to include in digest "
           f"({'all' if send_all else f'new; {queued} more queued for later'}).")

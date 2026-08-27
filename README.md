@@ -12,6 +12,9 @@ Sources (all public or official, nothing that breaks a site's terms of use):
 - Community listing repos that publish a `listings.json` (Simplify's Internships
   and New-Grad feeds, plus an underclassmen-opportunities feed). Feeds marked
   "evergreen" skip the age filter, since their dates are just when they were added.
+- A curated list of firm discovery/insight programs in `config/programs.yaml`
+  (Jane Street FOCUS, Citadel, Two Sigma, Microsoft Explore, Google STEP, etc.).
+  These bypass the filters, always surface once, and are labeled Discovery.
 - Adzuna and USAJobs search APIs. Optional, and need free keys.
 
 It runs on GitHub Actions at no cost and sends the mail through the Gmail API.
@@ -75,6 +78,7 @@ Everything is in `config/filters.yaml` unless the row says otherwise.
 | Drop roles by grad year or "new grad" | `exclude_keywords` |
 | Opportunity types (internship, discovery, full-time) | `employment_types` in `hard_filters` |
 | What counts as a discovery/insight program | `discovery_keywords` |
+| Firm discovery programs to always include | `config/programs.yaml` |
 | Turn the location / recency / employment gates on or off | `hard_filters` |
 | How old a posting can be | `max_age_days` in `hard_filters` |
 | Weighting of recency vs. preferred city in the ranking | `scoring` |

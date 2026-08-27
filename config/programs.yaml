@@ -1,0 +1,96 @@
+# Curated discovery / insight programs to ALWAYS surface (once each, until seen).
+#
+# These are hand-picked early-career programs at firms whose own sites don't
+# publish a machine-readable feed, so they can't be scraped. Unlike scraped
+# roles, entries here BYPASS the topic/location/recency filters — you curated
+# them, so they're pre-approved. They're labeled "Discovery" in the digest.
+#
+# Fields: company, title, url  (required) | location, topic (optional).
+#   topic groups it in the email; one of:
+#   machine_learning | data_science | statistics | quant_finance | health_data | software_engineering
+#
+# Add or remove freely. URLs verified 2026-08; update if a firm moves a page.
+
+# ---- Quant / trading firms ----
+- company: Jane Street
+  title: FOCUS Program (first-year)
+  url: https://www.janestreet.com/join-jane-street/programs-and-events/focus/
+  location: NYC
+  topic: quant_finance
+- company: Jane Street
+  title: IN FOCUS Program (undergraduate)
+  url: https://www.janestreet.com/join-jane-street/programs-and-events/in-focus/
+  location: NYC
+  topic: quant_finance
+- company: Jane Street
+  title: FTTP — First-Year Trading & Technology Program
+  url: https://www.janestreet.com/join-jane-street/programs-and-events/fttp/
+  location: NYC
+  topic: quant_finance
+- company: Citadel
+  title: Discover Citadel (first & second year)
+  url: https://www.citadel.com/careers/programs-and-events/discover-citadel/
+  location: NYC
+  topic: quant_finance
+- company: Citadel Securities
+  title: Discover Citadel Securities
+  url: https://www.citadelsecurities.com/careers/programs-and-events/discover-citadel-securities/
+  location: NYC
+  topic: quant_finance
+- company: Two Sigma
+  title: Undergraduate Programs
+  url: https://www.twosigma.com/undergraduate-students/
+  location: NYC
+  topic: quant_finance
+- company: Jump Trading
+  title: Students & New Grads Programs
+  url: https://www.jumptrading.com/hr/students-new-grads
+  location: Chicago
+  topic: quant_finance
+- company: Hudson River Trading
+  title: Explore HRT / Inside HRT (first & second year)
+  url: https://www.hudsonrivertrading.com/student-opportunities/
+  location: NYC
+  topic: quant_finance
+- company: D. E. Shaw
+  title: Discovery Fellowship (sophomore)
+  url: https://www.deshaw.com/careers/internships
+  location: NYC
+  topic: quant_finance
+- company: Point72
+  title: Point72 Academy
+  url: https://point72.com/point72-academy/
+  location: NYC
+  topic: quant_finance
+- company: Susquehanna (SIG)
+  title: Discovery Day Programs (first & second year)
+  url: https://careers.sig.com/us-discovery-programs/jobs
+  location: Philadelphia
+  topic: quant_finance
+- company: Goldman Sachs
+  title: Possibilities Series (first-year)
+  url: https://www.goldmansachs.com/careers/students/programs-and-internships/americas/possibilities-series
+  location: NYC
+  topic: quant_finance
+- company: Goldman Sachs
+  title: Emerging Leaders Series (sophomore)
+  url: https://www.goldmansachs.com/careers/students/programs-and-internships/americas/emerging-leaders-series
+  location: NYC
+  topic: quant_finance
+
+# ---- Big tech ----
+- company: Microsoft
+  title: Explore Program (first & second year)
+  url: https://careers.microsoft.com/students
+  location: Multiple
+  topic: software_engineering
+- company: Google
+  title: STEP Internship (first & second year)
+  url: https://buildyourfuture.withgoogle.com/programs/step
+  location: Multiple
+  topic: software_engineering
+- company: Meta
+  title: Meta University (first & second year)
+  url: https://www.metacareers.com/careerprograms/pathways/metauniversity
+  location: Multiple
+  topic: software_engineering
