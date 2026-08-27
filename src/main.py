@@ -95,6 +95,10 @@ def run(dry_run: bool = False, send_all: bool = False, seed: bool = False) -> in
         last = seen.get(j.id)
         if last is None:
             return True                       # never sent -> show once (or on open)
+        # Recurrence is ONLY for curated programs. Every other role (internships
+        # from any source) is show-once: once emailed, it never comes back.
+        if j.source != "program":
+            return False
         last_d = _pdate(last)
         if last_d is None:
             return True
