@@ -98,6 +98,12 @@ def _card(job: Job, cat: dict) -> str:
             f"font-size:11px;font-weight:700;border-radius:10px;padding:2px 8px;"
             f"margin-left:6px;vertical-align:middle;\">{fresh_label}</span>"
         )
+    if job.recur_days:                         # recurring program marker
+        badge += (
+            "<span style=\"display:inline-block;background:#eef2ff;color:#4f46e5;"
+            "font-size:11px;font-weight:700;border-radius:10px;padding:2px 8px;"
+            "margin-left:6px;vertical-align:middle;\">&#8635; Recurring</span>"
+        )
 
     # employment tag — solid pill in the category accent
     emp_tag = ""
@@ -230,7 +236,10 @@ def build_text(jobs: list[Job]) -> str:
             fresh = _freshness(j.posted_at)[0]
             emp = {"internship": "Internship", "discovery": "Discovery",
                    "full-time": "Full-time"}.get(j.employment, "")
-            tags = " ".join(t for t in (f"[{emp}]" if emp else "", f"[{fresh}]" if fresh else "") if t)
+            recur = "Recurring" if j.recur_days else ""
+            tags = " ".join(t for t in (f"[{emp}]" if emp else "",
+                                        f"[{fresh}]" if fresh else "",
+                                        f"[{recur}]" if recur else "") if t)
             tags = f"  {tags}" if tags else ""
             loc = f" — {j.location}" if j.location else ""
             lines.append(f"• {j.title}{tags}")
