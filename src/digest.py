@@ -204,6 +204,9 @@ def build_html(jobs: list[Job]) -> str:
         for j in bjobs:
             parts.append(_card(j, cat))
 
+    # ---- raw link list ------------------------------------------------------
+    parts.append(_links_block(jobs))
+
     # ---- footer -------------------------------------------------------------
     parts.append(
         "<div style=\"margin-top:28px;padding-top:14px;border-top:1px solid #eceef2;"
@@ -214,6 +217,37 @@ def build_html(jobs: list[Job]) -> str:
     )
     parts.append("</div>")
     return "".join(parts)
+
+
+def build_links_txt(jobs: list[Job]) -> str:
+    """Every role as raw text, one block each:
+
+        Company name
+        Position title
+        link
+    """
+    blocks = []
+    for j in jobs:
+        blocks.append("\n".join([j.company or "—", j.title or "—", j.url]))
+    return "\n\n".join(blocks)
+
+
+def _links_block(jobs: list[Job]) -> str:
+    """The raw-link list at the end of the digest — easy to scan and copy."""
+    if not jobs:
+        return ""
+    return (
+        "<div style=\"margin-top:28px;\">"
+        "<div style=\"font-size:15px;font-weight:800;color:#374151;"
+        "border-bottom:2px solid #e5e7eb;padding-bottom:5px;margin-bottom:10px;\">"
+        "🔗 All links</div>"
+        "<div style=\"background:#f9fafb;border:1px solid #eceef2;border-radius:10px;"
+        "padding:14px 16px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;"
+        "font-size:12px;line-height:1.55;color:#374151;white-space:pre-wrap;"
+        "word-break:break-all;\">"
+        + html.escape(build_links_txt(jobs)) +
+        "</div></div>"
+    )
 
 
 def build_text(jobs: list[Job]) -> str:
